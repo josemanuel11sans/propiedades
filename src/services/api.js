@@ -1,5 +1,5 @@
 import axios from "axios"
-const API_URL = "http://localhost:3000"
+export const API_URL = "http://localhost:3000"
 
 // Create an axios instance with default config
 export const api = axios.create({
@@ -101,3 +101,15 @@ export const fetchInmuebleById = async (id) => {
     throw error
   }
 }
+
+export const fetchImagenes = async (ids) => {
+  try {
+    //para más de una imagen, se hace un request por cada id
+    const requests = ids.map(id => axios.get(`${API_URL}/imagenes/${id}`));
+    const responses = await Promise.all(requests);
+    return responses.map(res => res.data); 
+  } catch (error) {
+    console.error("Error fetching imagenes:", error);
+    throw error;
+  }
+};

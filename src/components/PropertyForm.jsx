@@ -46,7 +46,7 @@ export function PropertyForm() {
       setImagePreviewUrls(property.imagenes || [])
       setError(null)
     } catch (err) {
-      setError("Error loading property. Please try again.")
+      setError("Error al cargar propiedades. Intente de nuevo.")
       console.error("Error fetching property:", err)
     } finally {
       setLoading(false)
@@ -125,7 +125,7 @@ export function PropertyForm() {
         })
         return response.data.imagenes // Retorna los IDs de las imágenes
     } catch (err) {
-        console.error("Error uploading images:", err)
+        console.error("Error subiendo imagenes:", err)
         throw new Error("Failed to upload images")
     }
 }
@@ -137,7 +137,7 @@ const handleSubmit = async (e) => {
         setError(null)
 
         if (!formData.ubicacion || !formData.precio) {
-            setError("Please fill in all required fields")
+            setError("Por favor completa todos los campos requeridos")
             setLoading(false)
             return
         }
@@ -167,15 +167,15 @@ const handleSubmit = async (e) => {
 
         navigate("/properties")
     } catch (err) {
-        setError("Error saving property. Please try again.")
-        console.error("Error saving property:", err)
+        setError("Error al guardar propiedad. Intente de nuevo")
+        console.error("Error al guardar propiedad:", err)
     } finally {
         setLoading(false)
     }
 }
 
   if (loading && isEditing) {
-    return <div className="loading">Loading property data...</div>
+    return <div className="loading">Cargando datos de la propiedad...</div>
   }
 
   return (
@@ -186,7 +186,7 @@ const handleSubmit = async (e) => {
 
       <form onSubmit={handleSubmit} className="property-form">
         <div className="form-group">
-          <label htmlFor="ubicacion">Location *</label>
+          <label htmlFor="ubicacion">Ubicación *</label>
           <input
             type="text"
             id="ubicacion"
@@ -194,12 +194,12 @@ const handleSubmit = async (e) => {
             value={formData.ubicacion}
             onChange={handleChange}
             required
-            placeholder="Enter property address"
+            placeholder="Ingresa la ubicación de la propiedad"
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="precio">Price (MXN) *</label>
+          <label htmlFor="precio">Precio (MXN) *</label>
           <input
             type="number"
             id="precio"
@@ -208,19 +208,19 @@ const handleSubmit = async (e) => {
             onChange={handleChange}
             required
             min="0"
-            placeholder="Enter monthly rent"
+            placeholder="Ingresa el precio mensual de la propiedad"
           />
         </div>
 
         <div className="form-group">
-          <label>Features</label>
+          <label>Características</label>
           {formData.caracteristicas.map((feature, index) => (
             <div key={index} className="feature-input">
               <input
                 type="text"
                 value={feature}
                 onChange={(e) => handleFeatureChange(index, e.target.value)}
-                placeholder="Enter a feature"
+                placeholder="Ingresa una característica"
               />
               {formData.caracteristicas.length > 1 && (
                 <button type="button" className="remove-btn" onClick={() => removeFeatureField(index)}>
@@ -231,12 +231,12 @@ const handleSubmit = async (e) => {
           ))}
           <button type="button" className="add-btn" onClick={addFeatureField}>
             <Plus className="icon" />
-            Add Feature
+            Agregar característica
           </button>
         </div>
 
         <div className="form-group">
-          <label>Availability</label>
+          <label>Disponibilidad</label>
           <div className="checkbox-group">
             <input
               type="checkbox"
@@ -245,12 +245,12 @@ const handleSubmit = async (e) => {
               checked={formData.disponible}
               onChange={handleChange}
             />
-            <label htmlFor="disponible">Property is available for rent</label>
+            <label htmlFor="disponible">Propiedad disponible para renta</label>
           </div>
         </div>
 
         <div className="form-group">
-          <label>Images</label>
+          <label>Imágenes</label>
           <div className="image-upload-container">
             <label className="image-upload-label">
               <input
@@ -283,10 +283,10 @@ const handleSubmit = async (e) => {
 
         <div className="form-actions">
           <button type="button" className="btn btn-secondary" onClick={() => navigate("/properties")}>
-            Cancel
+            Cancelar
           </button>
           <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? "Saving..." : isEditing ? "Update Property" : "Create Property"}
+            {loading ? "Guardando..." : isEditing ? "Editar Propiedad" : "Crear Propiedad"}
           </button>
         </div>
       </form>
