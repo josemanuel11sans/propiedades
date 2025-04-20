@@ -28,7 +28,7 @@ export function PropertyList() {
       setProperties(response.data)
       setError(null)
     } catch (err) {
-      setError("Error loading properties. Please try again.")
+      setError("Error al cargar las propiedades. Intente de nuevo.")
       console.error("Error fetching properties:", err)
     } finally {
       setLoading(false)
@@ -36,12 +36,12 @@ export function PropertyList() {
   }
 
   const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this property?")) {
+    if (window.confirm("¿Estás seguro de querer eliminar esta propiedad?")) {
       try {
         await api.delete(`/inmuebles/${id}`)
         setProperties(properties.filter((property) => property._id !== id))
       } catch (err) {
-        setError("Error deleting property. Please try again.")
+        setError("Error al eliminar la propiedad. Intente de nuevo.")
         console.error("Error deleting property:", err)
       }
     }
@@ -83,37 +83,37 @@ export function PropertyList() {
   return (
     <div className="property-list-container">
       <div className="list-header">
-        <h1>Properties</h1>
+        <h1>Propiedades</h1>
         <Link to="/properties/new" className="btn btn-primary">
-          Add New Property
+          Agregar nueva propiedad
         </Link>
       </div>
 
       <div className="search-filter-container">
         <div className="search-bar">
           <Search className="search-icon" />
-          <input type="text" placeholder="Search by location..." value={searchTerm} onChange={handleSearchChange} />
+          <input type="text" placeholder="Buscar por ubicación..." value={searchTerm} onChange={handleSearchChange} />
         </div>
 
         <button className="filter-toggle" onClick={toggleFilters}>
           <Filter className="filter-icon" />
-          <span>Filters</span>
+          <span>Filtros</span>
         </button>
       </div>
 
       {showFilters && (
         <div className="filters-panel">
           <div className="filter-group">
-            <label>Availability</label>
+            <label>Disponibilidad</label>
             <select name="disponible" value={filters.disponible} onChange={handleFilterChange}>
-              <option value="all">All</option>
-              <option value="available">Available</option>
-              <option value="rented">Rented</option>
+              <option value="all">Todas</option>
+              <option value="available">Disponibles</option>
+              <option value="rented">Rentadas</option>
             </select>
           </div>
 
           <div className="filter-group">
-            <label>Price Range</label>
+            <label>Rango de Precio</label>
             <div className="price-inputs">
               <input
                 type="number"
@@ -122,7 +122,7 @@ export function PropertyList() {
                 value={filters.minPrice}
                 onChange={handleFilterChange}
               />
-              <span>to</span>
+              <span>a</span>
               <input
                 type="number"
                 name="maxPrice"
@@ -136,24 +136,24 @@ export function PropertyList() {
       )}
 
       {loading ? (
-        <div className="loading">Loading properties...</div>
+        <div className="loading">Cargando propiedades...</div>
       ) : error ? (
         <div className="error-message">{error}</div>
       ) : (
         <>
           <div className="results-count">
-            Showing {filteredProperties.length} of {properties.length} properties
+            Mostrando {filteredProperties.length} de {properties.length} propiedades
           </div>
 
           <div className="property-table-container">
             <table className="property-table">
               <thead>
                 <tr>
-                  <th>Location</th>
-                  <th>Price</th>
-                  <th>Features</th>
-                  <th>Status</th>
-                  <th>Actions</th>
+                  <th>Ubicación</th>
+                  <th>Precio</th>
+                  <th>Características</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -175,7 +175,7 @@ export function PropertyList() {
                     </td>
                     <td>
                       <span className={`status-badge ${property.disponible ? "available" : "rented"}`}>
-                        {property.disponible ? "Available" : "Rented"}
+                        {property.disponible ? "Disponible" : "Rentada"}
                       </span>
                     </td>
                     <td>
@@ -199,7 +199,7 @@ export function PropertyList() {
 
           {filteredProperties.length === 0 && (
             <div className="no-results">
-              <p>No properties found matching your criteria.</p>
+              <p>No se encontraron propiedades con los criterios especificados</p>
               <button
                 className="btn btn-secondary"
                 onClick={() => {
@@ -211,7 +211,7 @@ export function PropertyList() {
                   })
                 }}
               >
-                Clear Filters
+                Limpiar filtros
               </button>
             </div>
           )}

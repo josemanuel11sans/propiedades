@@ -21,7 +21,7 @@ function App() {
           </Routes>
         </main>
         <footer className="footer">
-          <p>© {new Date().getFullYear()} Property Management System</p>
+          <p>{/*© {new Date().getFullYear()}*/} PropManager</p>
         </footer>
       </div>
     </Router>

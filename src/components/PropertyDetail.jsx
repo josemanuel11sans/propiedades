@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
-import { MapPin, DollarSign, Home, Calendar, User, Star, Edit, Trash2, ChevronLeft, ChevronRight, Check, X, MessageSquare } from 'lucide-react'
+import { MapPin, DollarSign, Home, Calendar, User, Star, Edit, Trash2, ChevronLeft, ChevronRight, Check, X, MessageSquare, CircleDollarSign } from 'lucide-react'
 import {
   fetchInmuebleById,
   deleteInmueble,
@@ -227,7 +227,7 @@ export default function PropertyDetail() {
               <span>{property.ubicacion}</span>
             </div>
             <div className="meta-item">
-              <DollarSign className="icon" />
+              <CircleDollarSign className="icon" />
               <span className="price">${property.precio.toLocaleString()} MXN</span>
             </div>
           </div>
@@ -248,7 +248,7 @@ export default function PropertyDetail() {
             )}
           </div>
 
-          {property.disponible && (
+          {/*property.disponible && (
             <div className="rental-request-action">
               <button
                 className="btn btn-primary btn-lg"
@@ -258,12 +258,12 @@ export default function PropertyDetail() {
                 {requestSubmitting ? 'Enviando solicitud...' : 'Solicitar Renta'}
               </button>
             </div>
-          )}
+          )*/}
         </div>
       </div>
 
       <div className="detail-tabs">
-        <button
+        {/*<button
           className={`tab-button ${activeTab === "details" ? "active" : ""}`}
           onClick={() => setActiveTab("details")}
         >
@@ -286,15 +286,16 @@ export default function PropertyDetail() {
           onClick={() => setActiveTab("reviews")}
         >
           Reseñas ({reviews.length})
-        </button>
+        </button>*/}
       </div>
 
-      <div className="tab-content">
+      {/*<div className="tab-content">
+        
         {activeTab === "details" && (
           <div className="details-tab">
             <h2>Detalles del Inmueble</h2>
             <div className="property-description">
-              <p>{property.descripcion}</p>
+              <p>{property.caracteristicas}</p>
             </div>
           </div>
         )}
@@ -372,7 +373,8 @@ export default function PropertyDetail() {
             </form>
           </div>
         )}
-      </div>
+          
+      </div>*/}
     </div>
   )
 }

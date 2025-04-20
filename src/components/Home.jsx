@@ -97,7 +97,7 @@ export function Home() {
                 {property.imagenes && property.imagenes.length > 0 ? (
                   <img src={property.imagenes[0] || "/placeholder.svg"} alt={property.ubicacion} />
                 ) : (
-                  <div className="placeholder-image">No Image</div>
+                  <div className="placeholder-image">No se encontró una imagen</div>
                 )}
                 <div className="property-badge">{property.disponible ? "Available" : "Rented"}</div>
               </div>
@@ -112,7 +112,7 @@ export function Home() {
                   ))}
                 </div>
                 <Link to={`/properties/${property._id}`} className="btn btn-secondary">
-                  View Details
+                  Ver detalles
                 </Link>
               </div>
             </div>

@@ -12,19 +12,19 @@ export function Navbar() {
         <li>
           <Link to="/" className="navbar-item">
             <Home className="icon" />
-            <span>Home</span>
+            <span>Inicio</span>
           </Link>
         </li>
         <li>
           <Link to="/properties" className="navbar-item">
             <Building className="icon" />
-            <span>Properties</span>
+            <span>Propiedades</span>
           </Link>
         </li>
         <li>
           <Link to="/properties/new" className="navbar-item">
             <Plus className="icon" />
-            <span>Add Property</span>
+            <span>Agregar Propiedad</span>
           </Link>
         </li>
         {/* <li>
