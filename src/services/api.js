@@ -102,7 +102,7 @@ export const fetchInmuebleById = async (id) => {
   }
 }
 
-export const fetchImagenes = async (ids) => {
+/* export const fetchImagenes = async (ids) => {
   try {
     //para más de una imagen, se hace un request por cada id
     const requests = ids.map(id => axios.get(`${API_URL}/imagenes/${id}`));
@@ -110,6 +110,65 @@ export const fetchImagenes = async (ids) => {
     return responses.map(res => res.data); 
   } catch (error) {
     console.error("Error fetching imagenes:", error);
+    throw error;
+  }
+}; */
+export const fetchImagenes = async (ids) => {
+  try {
+    console.log("IDs recibidos:", ids);
+
+    // Validación inicial
+    if (!Array.isArray(ids) || ids.length === 0) {
+      console.warn("fetchImagenes: No se recibieron IDs válidos o el arreglo está vacío.");
+      return [];
+    }
+
+    // Validar formato de los IDs antes de enviar la petición
+    const validIds = ids.filter(id =>
+      typeof id === 'string' && /^[a-f\d]{24}$/i.test(id)
+    );
+
+    if (validIds.length !== ids.length) {
+      console.warn("Algunos IDs no tienen formato válido de ObjectId:", ids);
+    } else {
+      console.log("Todos los IDs tienen formato válido de ObjectId:", validIds);
+    }
+
+    // Generar peticiones
+    const requests = validIds.map(id => {
+      const url = `${API_URL}/imagenes/${id}`;
+      console.log("URL generada:", url);
+      return axios.get(url).catch(err => {
+        console.error(`Error al obtener imagen con ID ${id}:`, err.message);
+        throw err;
+      });
+    });
+    
+
+    console.log("Requests generadas:", requests);
+
+    // Ejecutar todas las peticiones, sin fallar si una da error
+    const responses = await Promise.allSettled(requests);
+
+    // Filtrar y extraer imágenes exitosas
+    const imagenes = responses
+      .filter(res => res.status === 'fulfilled')
+      .map(res => res.value.data);
+
+    // Registrar errores individuales
+    const errores = responses
+      .filter(res => res.status === 'rejected')
+      .map(res => res.reason);
+
+    if (errores.length > 0) {
+      console.warn("Algunas imágenes no se pudieron obtener:", errores);
+    }
+
+    console.log("Imágenes recibidas:", imagenes);
+    return imagenes;
+
+  } catch (error) {
+    console.error("Error general en fetchImagenes:", error);
     throw error;
   }
 };

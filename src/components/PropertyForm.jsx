@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { X, Plus, Upload } from "lucide-react"
-import { api } from "../services/api"
+import { api, fetchImagenes } from "../services/api"
 
 export function PropertyForm() {
   const { id } = useParams()
@@ -42,8 +42,14 @@ export function PropertyForm() {
         disponible: property.disponible,
         imagenes: property.imagenes || [],
       })
-
-      setImagePreviewUrls(property.imagenes || [])
+      fetchImagenes(property.imagenes).then((imagenes) => {
+              property.imagenes = imagenes.map(img => img.imageUrl)
+              setImagePreviewUrls(property.imagenes)
+            }).catch((error) => {
+              console.error("Error fetching images:", error)
+              setError("Error al cargar las imágenes del inmueble.")
+            })
+      //setImagePreviewUrls(property.imagenes || [])
       setError(null)
     } catch (err) {
       setError("Error al cargar propiedades. Intente de nuevo.")
@@ -180,7 +186,7 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="property-form-container">
-      <h1>{isEditing ? "Edit Property" : "Add New Property"}</h1>
+      <h1>{isEditing ? "Editar Propiedad" : "Agregar Nueva Propiedad"}</h1>
 
       {error && <div className="error-message">{error}</div>}
 

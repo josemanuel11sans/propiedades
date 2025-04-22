@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Link } from "react-router-dom"
 import { Building, DollarSign, Users, Star } from "lucide-react"
-import { api } from "../services/api"
+import { api, fetchImagenes } from "../services/api"
 
 export function Home() {
   const [stats, setStats] = useState({
@@ -14,35 +14,58 @@ export function Home() {
   })
 
   const [featuredProperties, setFeaturedProperties] = useState([])
+  const [property, setProperty] = useState(null)
 
   useEffect(() => {
-    // Fetch properties for stats and featured listings
     const fetchData = async () => {
       try {
-        const response = await api.get("/inmuebles")
-        const properties = response.data
-
-        setFeaturedProperties(properties.slice(0, 3))
-
+        const response = await api.get("/inmuebles");
+        const properties = response.data;
+        console.log("Fetched properties:", properties);
+  
+        // Procesar imágenes para todas las propiedades
+        const propertiesWithImages = await Promise.all(
+          properties.map(async (property) => {
+            try {
+              const imagenes = await fetchImagenes(property.imagenes);
+              return {
+                ...property,
+                imagenes: imagenes.map((img) => img.imageUrl),
+              };
+            } catch (error) {
+              console.error(`Error fetching images for property ${property._id}:`, error);
+              return {
+                ...property,
+                imagenes: [], // Si falla, asignar un array vacío
+              };
+            }
+          })
+        );
+  
+        setFeaturedProperties(propertiesWithImages.slice(0, 3));
+  
         setStats({
           totalProperties: properties.length,
           availableProperties: properties.filter((p) => p.disponible).length,
           activeContracts: properties.reduce(
-            (acc, p) => acc + p.contratos.filter((c) => c.estado === "activo").length,
-            0,
+            (acc, p) =>
+              acc + p.contratos.filter((c) => c.estado === "activo").length,
+            0
           ),
           pendingRequests: properties.reduce(
-            (acc, p) => acc + p.solicitudes_renta.filter((s) => s.estado === "pendiente").length,
-            0,
+            (acc, p) =>
+              acc + p.solicitudes_renta.filter((s) => s.estado === "pendiente")
+                .length,
+            0
           ),
-        })
+        });
       } catch (error) {
-        console.error("Error fetching data:", error)
+        console.error("Error fetching data:", error);
       }
-    }
-
-    fetchData()
-  }, [])
+    };
+  
+    fetchData();
+  }, []);
 
   return (
     <div className="home-container">
@@ -95,11 +118,11 @@ export function Home() {
             <div key={property._id} className="property-card">
               <div className="property-image">
                 {property.imagenes && property.imagenes.length > 0 ? (
-                  <img src={property.imagenes[0] || "/placeholder.svg"} alt={property.ubicacion} />
+                  <img src={property.imagenes || "/placeholder.svg"} alt={property.ubicacion} />
                 ) : (
                   <div className="placeholder-image">No se encontró una imagen</div>
                 )}
-                <div className="property-badge">{property.disponible ? "Available" : "Rented"}</div>
+                <div className="property-badge">{property.disponible ? "Disponible" : "Rentada"}</div>
               </div>
               <div className="property-content">
                 <h3>{property.ubicacion}</h3>
@@ -119,7 +142,7 @@ export function Home() {
           ))}
         </div>
         {featuredProperties.length === 0 && (
-          <p className="no-data">No hay propiedades disponibles. ¡Añade tu primera propiedad!</p>
+          <p className="no-data">No hay propiedades disponibles. ¡Agrega tu primera propiedad!</p>
         )}
         <div className="view-all">
           <Link to="/properties" className="btn btn-outline">
