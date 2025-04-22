@@ -72,15 +72,15 @@ export const createReview = async (id, reviewData) => {
   }
 }
 
-export const fetchReviews = async (id) => {
-  try {
-    const response = await axios.get(`${API_URL}/inmuebles/${id}/resenas`)
-    return response.data
-  } catch (error) {
-    console.error(`Error fetching reviews for inmueble with id ${id}:`, error)
-    throw error
-  }
-}
+// export const fetchReviews = async (id) => {
+//   try {
+//     const response = await axios.get(`${API_URL}/inmuebles/${id}/resenas`)
+//     return response.data
+//   } catch (error) {
+//     console.error(`Error fetching reviews for inmueble with id ${id}:`, error)
+//     throw error
+//   }
+// }
 
 
 export const deleteInmueble = async (id) => {

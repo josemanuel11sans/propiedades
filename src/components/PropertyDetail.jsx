@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react"
 import { useParams, Link, useNavigate } from "react-router-dom"
-import { MapPin, DollarSign, Home, Calendar, User, Star, Edit, Trash2, ChevronLeft, ChevronRight, Check, X, MessageSquare, CircleDollarSign } from 'lucide-react'
+import { MapPin, DollarSign, Home, Calendar, User, Edit, Trash2, ChevronLeft, ChevronRight, Check, CircleDollarSign } from 'lucide-react'
 import {
   fetchInmuebleById,
   deleteInmueble,
   createRentalRequest,
   fetchRentalRequests,
-  createReview,
-  fetchReviews,
   fetchImagenes
 } from "../services/api"
 import { API_URL } from "../services/api.js"
@@ -17,21 +15,12 @@ export default function PropertyDetail() {
   const navigate = useNavigate()
   const [property, setProperty] = useState(null)
   const [rentalRequests, setRentalRequests] = useState([])
-  const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState("details")
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  // Form states
-  const [reviewForm, setReviewForm] = useState({
-    inquilino_id: '64f5a53d1234567890abcdef', // ID de ejemplo, debería ser el ID del usuario actual
-    calificacion: 5,
-    comentario: ''
-  })
-
   const [requestSubmitting, setRequestSubmitting] = useState(false)
-  const [reviewSubmitting, setReviewSubmitting] = useState(false)
 
   useEffect(() => {
     fetchPropertyData()
@@ -41,8 +30,6 @@ export default function PropertyDetail() {
     try {
       setLoading(true)
       const propertyData = await fetchInmuebleById(id)
-      // Convertir imágenes almacenadas en MongoDB a URLs utilizables
-      console.log(propertyData.imagenes);
       fetchImagenes(propertyData.imagenes).then((imagenes) => {
         propertyData.imagenes = imagenes.map(img => img.imageUrl)
         setProperty(propertyData)
@@ -50,20 +37,11 @@ export default function PropertyDetail() {
         console.error("Error fetching images:", error)
         setError("Error al cargar las imágenes del inmueble.")
       })
-      /* if (propertyData.imagenes && propertyData.imagenes.length > 0) {
-        propertyData.imagenes = propertyData.imagenes.map(img => img.imageUrl)
-        //propertyData.imagenes = propertyData.imagenes.map(img => `data:image/jpeg;base64,${img}`)
-      }
- */
       setProperty(propertyData)
 
       // Fetch rental requests
       const requestsData = await fetchRentalRequests(id)
       setRentalRequests(requestsData)
-
-      // Fetch reviews
-      const reviewsData = await fetchReviews(id)
-      setReviews(reviewsData)
 
       setError(null)
     } catch (err) {
@@ -107,38 +85,6 @@ export default function PropertyDetail() {
       console.error("Error creating rental request:", err)
     } finally {
       setRequestSubmitting(false)
-    }
-  }
-
-  const handleReviewSubmit = async (e) => {
-    e.preventDefault()
-
-    if (!reviewForm.comentario.trim()) {
-      alert('Por favor, escriba un comentario para su reseña')
-      return
-    }
-
-    try {
-      setReviewSubmitting(true)
-      await createReview(id, reviewForm)
-
-      // Refresh reviews
-      const reviewsData = await fetchReviews(id)
-      setReviews(reviewsData)
-
-      // Reset form
-      setReviewForm({
-        ...reviewForm,
-        comentario: '',
-        calificacion: 5
-      })
-
-      alert('Reseña enviada con éxito')
-    } catch (err) {
-      setError("Error al enviar la reseña. Por favor, intente de nuevo más tarde.")
-      console.error("Error creating review:", err)
-    } finally {
-      setReviewSubmitting(false)
     }
   }
 
@@ -187,7 +133,6 @@ export default function PropertyDetail() {
 
       <div className="property-overview">
         <div className="image-gallery">
-          
           {property.imagenes && property.imagenes.length > 0 ? (
             <>
               <div className="main-image">
@@ -247,18 +192,6 @@ export default function PropertyDetail() {
               <p>No hay características especificadas</p>
             )}
           </div>
-
-          {/*property.disponible && (
-            <div className="rental-request-action">
-              <button
-                className="btn btn-primary btn-lg"
-                onClick={handleRentalRequest}
-                disabled={requestSubmitting}
-              >
-                {requestSubmitting ? 'Enviando solicitud...' : 'Solicitar Renta'}
-              </button>
-            </div>
-          )*/}
         </div>
       </div>
 
@@ -280,101 +213,8 @@ export default function PropertyDetail() {
           onClick={() => setActiveTab("requests")}
         >
           Solicitudes ({rentalRequests ? rentalRequests.length : 0})
-        </button>
-        <button
-          className={`tab-button ${activeTab === "reviews" ? "active" : ""}`}
-          onClick={() => setActiveTab("reviews")}
-        >
-          Reseñas ({reviews.length})
         </button>*/}
       </div>
-
-      {/*<div className="tab-content">
-        
-        {activeTab === "details" && (
-          <div className="details-tab">
-            <h2>Detalles del Inmueble</h2>
-            <div className="property-description">
-              <p>{property.caracteristicas}</p>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "requests" && (
-          <div className="requests-tab">
-            <h2>Solicitudes de Renta</h2>
-            {rentalRequests.length > 0 ? (
-              <ul>
-                {rentalRequests.map((request, index) => (
-                  <li key={index}>
-                    <div>
-                      <strong>Inquilino:</strong> {request.inquilino_nombre}
-                    </div>
-                    <div>
-                      <strong>Estado:</strong> {request.estado}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No hay solicitudes de renta aún.</p>
-            )}
-          </div>
-        )}
-
-        {activeTab === "reviews" && (
-          <div className="reviews-tab">
-            <h2>Reseñas</h2>
-            {reviews.length > 0 ? (
-              <ul>
-                {reviews.map((review, index) => (
-                  <li key={index}>
-                    <div className="review">
-                      <div className="review-rating">
-                        {Array.from({ length: review.calificacion }, (_, idx) => (
-                          <Star key={idx} className="star" />
-                        ))}
-                      </div>
-                      <p>{review.comentario}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No hay reseñas aún.</p>
-            )}
-
-            <h3>Deja tu Reseña</h3>
-            <form onSubmit={handleReviewSubmit}>
-              <textarea
-                value={reviewForm.comentario}
-                onChange={(e) => setReviewForm({ ...reviewForm, comentario: e.target.value })}
-                placeholder="Escribe tu comentario..."
-                required
-              />
-              <div>
-                <label>
-                  Calificación:
-                  <select
-                    value={reviewForm.calificacion}
-                    onChange={(e) => setReviewForm({ ...reviewForm, calificacion: parseInt(e.target.value) })}
-                  >
-                    {[1, 2, 3, 4, 5].map((rating) => (
-                      <option key={rating} value={rating}>
-                        {rating} {rating === 1 ? 'estrella' : 'estrellas'}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-              <button type="submit" disabled={reviewSubmitting}>
-                {reviewSubmitting ? 'Enviando...' : 'Enviar Reseña'}
-              </button>
-            </form>
-          </div>
-        )}
-          
-      </div>*/}
     </div>
   )
 }
