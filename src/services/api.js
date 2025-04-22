@@ -1,9 +1,9 @@
 import axios from "axios"
-export const API_URL = "http://localhost:3000"
+export const API_URL = "https://h4xrsaezrh.execute-api.us-east-1.amazonaws.com" //"http://localhost:3000"
 
 // Create an axios instance with default config
 export const api = axios.create({
-  baseURL: "http://localhost:3000", // Update this to match your Express backend URL
+  baseURL: "https://h4xrsaezrh.execute-api.us-east-1.amazonaws.com", // "http://localhost:3000", // Update this to match your Express backend URL
   headers: {
     "Content-Type": "application/json",
   },
